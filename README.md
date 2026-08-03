@@ -6,7 +6,7 @@ This project demonstrates how to provision and manage production-style AWS infra
 
 The project also demonstrates Terraform best practices by separating infrastructure into reusable modules, using a remote backend stored in Amazon S3, enabling state versioning and encryption, and implementing state locking with DynamoDB.
 
----
+
 
 # Project Architecture
 
@@ -25,7 +25,7 @@ The infrastructure provisions the following AWS resources:
 * Server-Side Encryption
 * DynamoDB State Locking
 
----
+
 
 # Technologies Used
 
@@ -40,7 +40,7 @@ The infrastructure provisions the following AWS resources:
 * Git
 * GitHub
 
----
+
 
 # Project Structure
 
@@ -71,7 +71,7 @@ terraform/
 └── terraform-architecture.png
 ```
 
----
+
 
 # Infrastructure Workflow
 
@@ -94,7 +94,7 @@ terraform/
 8. Terraform stores the infrastructure state in Amazon S3.
 9. State locking is handled by DynamoDB to prevent concurrent modifications.
 
----
+
 
 # Terraform Modules
 
@@ -125,7 +125,7 @@ Creates:
 * EC2 Instance
 * Apache Web Server
 
----
+
 
 # Remote Backend
 
@@ -144,7 +144,7 @@ Benefits include:
 * Secure encrypted state
 * Prevention of simultaneous Terraform executions
 
----
+
 
 # Screenshots
 
@@ -159,7 +159,7 @@ Include screenshots such as:
 * DynamoDB Lock Table
 * Terraform Architecture Diagram
 
----
+
 
 # Skills Demonstrated
 
@@ -181,7 +181,7 @@ Include screenshots such as:
 * AWS CLI
 * Infrastructure Troubleshooting
 
----
+
 
 # Future Improvements
 
@@ -194,11 +194,11 @@ Include screenshots such as:
 * Route 53 Integration
 * HTTPS using AWS Certificate Manager (ACM)
 
----
+
 
 # Author
 
-**Valarie M. Atsimbom**
+*Valarie M. Atsimbom**
 
 Cloud Engineering Portfolio
 
