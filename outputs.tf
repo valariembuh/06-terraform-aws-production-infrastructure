@@ -29,3 +29,12 @@ output "target_group_arn" {
   value = module.alb.target_group_arn
 
 }
+
+
+output "sns_topic_arn" {
+
+  description = "SNS Topic ARN"
+
+  value = aws_sns_topic.production_alerts.arn
+
+}

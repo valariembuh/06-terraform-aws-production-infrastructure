@@ -9,6 +9,10 @@ resource "aws_launch_template" "acme_launch_template" {
 
   instance_type = var.instance_type
 
+ iam_instance_profile {
+  name = "EC2-SSM-Profile"
+}
+
 
   vpc_security_group_ids = [
 
@@ -48,6 +52,20 @@ resource "aws_autoscaling_group" "acme_asg" {
   vpc_zone_identifier = var.vpc_zone_identifier
 
 
+instance_refresh {
+
+  strategy = "Rolling"
+
+  preferences {
+
+    min_healthy_percentage = 50
+
+  }
+
+}
+
+
+
   target_group_arns = [
     var.target_group_arn
   ]
@@ -76,5 +94,4 @@ resource "aws_autoscaling_group" "acme_asg" {
   }
 
 }
-
 
