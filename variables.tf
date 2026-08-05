@@ -3,22 +3,43 @@ variable "aws_region" {
   type        = string
 }
 
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
 }
 
-variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet"
+
+variable "public_subnet_a_cidr" {
+  description = "CIDR block for Public Subnet A"
   type        = string
 }
 
-variable "availability_zone" {
-  description = "Availability Zone for the public subnet"
+variable "public_subnet_b_cidr" {
+  description = "CIDR block for Public Subnet B"
   type        = string
 }
+
+
+variable "availability_zone_a" {
+  description = "Availability Zone for Public Subnet A"
+  type        = string
+}
+
+variable "availability_zone_b" {
+  description = "Availability Zone for Public Subnet B"
+  type        = string
+}
+
+
 
 variable "instance_type" {
   description = "EC2 instance type"
+  type        = string
+}
+
+
+variable "ami_id" {
+  description = "AMI ID"
   type        = string
 }

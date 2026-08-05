@@ -50,33 +50,4 @@ resource "aws_security_group" "web_sg" {
   }
 
 }
-resource "aws_instance" "acme_web_server" {
 
-
-  ami = var.ami_id
-
-
-  instance_type = var.instance_type
-
-
-  subnet_id = var.subnet_id
-
-
-  vpc_security_group_ids = [
-
-    aws_security_group.web_sg.id
-
-  ]
-
-
-  user_data = file("${path.root}/user-data.sh")
-
-
-  tags = {
-
-    Name = "Acme-WebServer"
-
-  }
-
-
-}

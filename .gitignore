@@ -15,3 +15,32 @@ override.tf.json
 *_override.tf.json
 
 .terraform.lock.hcl
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+
+# State files
+*.tfstate
+*.tfstate.*
+
+# Terraform plans
+*.tfplan
+
+# Crash logs
+crash.log
+
+# Variable overrides
+override.tf
+override.tf.json
+
+# Sensitive variables
+*.auto.tfvars
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
