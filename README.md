@@ -2,197 +2,339 @@
 
 ## Project Overview
 
-This project demonstrates how to provision and manage production-style AWS infrastructure using Terraform and reusable modules. The infrastructure is designed using Infrastructure as Code (IaC) principles and includes a custom Virtual Private Cloud (VPC), networking components, security groups, an EC2 web server with automated provisioning, and a remote Terraform backend for secure state management.
+This project demonstrates the design and deployment of a production-style, highly available AWS web application infrastructure using Terraform Infrastructure as Code (IaC).
 
-The project also demonstrates Terraform best practices by separating infrastructure into reusable modules, using a remote backend stored in Amazon S3, enabling state versioning and encryption, and implementing state locking with DynamoDB.
+The infrastructure was built using reusable Terraform modules following enterprise cloud engineering practices. The deployment includes networking, compute, load balancing, auto scaling, remote state management, and infrastructure validation.
 
-
-
-# Project Architecture
-
-The infrastructure provisions the following AWS resources:
-
-* Virtual Private Cloud (VPC)
-* Public Subnet
-* Internet Gateway
-* Route Table
-* Route Table Association
-* Security Group
-* EC2 Web Server
-* Automated Apache Installation using User Data
-* Amazon S3 Remote Backend
-* S3 Versioning
-* Server-Side Encryption
-* DynamoDB State Locking
+The goal of this project was to simulate how cloud engineers provision reliable AWS environments using automation instead of manual console configuration.
 
 
+# Architecture Overview
 
-# Technologies Used
+The deployed architecture follows a highly available AWS design:
+                     Internet
+                        |
+                        |
+                     Route 53
+                        |
+                        |
+          Application Load Balancer (ALB)
+                        |
+                        |
+                  ALB Listener :80
+                        |
+                        |
+                Target Group
+                        |
+         --------------------------------
+         |                              |
+         |                              |
+    EC2 Instance                  EC2 Instance
+    us-east-1a                    us-east-1b
+         |                              |
+         --------------------------------
+                        |
+                        |
+             Auto Scaling Group
+                        |
+                        |
+                 Launch Template
 
-* Terraform
-* Amazon Web Services (AWS)
-* Amazon EC2
-* Amazon VPC
-* Amazon S3
-* Amazon DynamoDB
-* AWS CLI
-* Linux (Ubuntu / WSL)
-* Git
-* GitHub
+
+             AWS VPC
+    --------------------------------
+    |                              |
+
+Public Subnet A Public Subnet B
+us-east-1a us-east-1b
 
 
 
-# Project Structure
 
-```text
+# AWS Services Used
+
+| Service | Purpose |
+|---|---|
+| Amazon VPC | Custom network architecture |
+| Public Subnets | Multi-AZ application deployment |
+| Internet Gateway | Internet connectivity |
+| Route Tables | Network routing |
+| Amazon EC2 | Web server instances |
+| Launch Template | EC2 configuration automation |
+| Auto Scaling Group | High availability and scaling |
+| Application Load Balancer | Traffic distribution |
+| Target Group | Instance health monitoring |
+| Amazon S3 | Terraform remote backend |
+| DynamoDB | Terraform state locking |
+| IAM | Secure AWS access |
+
+
+# Terraform Architecture
+
+The project was refactored from traditional Terraform configuration into reusable modules.
+
+## Root Module
+
+The root module controls the overall infrastructure deployment.
+
+
 terraform/
-│
-├── backend.tf
-├── data.tf
+
 ├── main.tf
+├── variables.tf
 ├── outputs.tf
 ├── provider.tf
-├── variables.tf
-├── terraform.tfvars
-├── user-data.sh
-├── README.md
+├── backend.tf
+├── data.tf
 │
-├── modules/
-│   ├── vpc/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   │
-│   └── compute/
-│       ├── main.tf
-│       ├── variables.tf
-│       └── outputs.tf
-│
-└── terraform-architecture.png
-```
-
-
-
-# Infrastructure Workflow
-
-1. Terraform initializes the AWS provider.
-2. The Root Module calls the VPC Module.
-3. The VPC Module creates:
-
-   * VPC
-   * Public Subnet
-   * Internet Gateway
-   * Route Table
-   * Route Table Association
-4. The VPC Module exports the VPC ID and Subnet ID.
-5. The Root Module passes these outputs into the Compute Module.
-6. The Compute Module creates:
-
-   * Security Group
-   * EC2 Instance
-7. User Data automatically installs Apache during instance launch.
-8. Terraform stores the infrastructure state in Amazon S3.
-9. State locking is handled by DynamoDB to prevent concurrent modifications.
+└── modules/
 
 
 
 # Terraform Modules
 
-## Root Module
-
-Responsible for orchestrating the deployment by calling child modules and passing variables between them.
-
 ## VPC Module
 
-Creates the networking layer:
+Responsible for networking resources:
 
-* VPC
-* Public Subnet
-* Internet Gateway
-* Route Table
-* Route Table Association
 
-Outputs:
+modules/vpc
 
-* VPC ID
-* Subnet ID
+├── main.tf
+├── variables.tf
+└── outputs.tf
 
-## Compute Module
 
 Creates:
 
-* Security Group
-* EC2 Instance
-* Apache Web Server
+- VPC
+- Public Subnets
+- Internet Gateway
+- Route Tables
+- Route Associations
 
 
 
-# Remote Backend
+## Compute Module
+
+Responsible for EC2 deployment:
+
+
+modules/compute
+
+├── main.tf
+├── variable.tf
+└── output.tf
+
+
+Creates:
+
+- Security Group
+- EC2 Instance
+- Apache Web Server
+- User Data automation
+
+
+
+## ALB Module
+
+Responsible for application traffic management:
+
+
+modules/alb
+
+├── main.tf
+├── variables.tf
+└── outputs.tf
+
+
+Creates:
+
+- Application Load Balancer
+- Listener
+- Target Group
+
+
+
+## Auto Scaling Module
+
+Responsible for compute availability:
+
+
+modules/autoscaling
+
+├── main.tf
+├── variables.tf
+└── outputs.tf
+
+
+Creates:
+
+- Launch Template
+- Auto Scaling Group
+- EC2 replacement capability
+
+
+
+# Remote Terraform State Management
 
 Terraform state is stored remotely using:
 
-* Amazon S3
-* Versioning Enabled
-* Server-Side Encryption Enabled
-* DynamoDB State Locking
+## Amazon S3 Backend
 
-Benefits include:
+Benefits:
 
-* Centralized state storage
-* Team collaboration
-* State recovery through versioning
-* Secure encrypted state
-* Prevention of simultaneous Terraform executions
+- Centralized state storage
+- State versioning
+- Disaster recovery capability
 
 
+## DynamoDB Locking
 
-# Screenshots
+Benefits:
 
-Include screenshots such as:
+- Prevents simultaneous Terraform modifications
+- Protects infrastructure state consistency
 
-* Terraform Plan
-* Terraform Apply
-* EC2 Running
-* Apache Web Server
-* Terraform Outputs
-* S3 Backend
-* DynamoDB Lock Table
-* Terraform Architecture Diagram
+Example:
 
 
-
-# Skills Demonstrated
-
-* Infrastructure as Code (IaC)
-* Terraform Modules
-* AWS Networking
-* Amazon EC2
-* User Data Automation
-* Terraform Outputs
-* Terraform Variables
-* Dynamic AMI Lookup
-* Remote State Management
-* Amazon S3
-* DynamoDB
-* Versioning
-* Encryption
-* Git
-* Linux CLI
-* AWS CLI
-* Infrastructure Troubleshooting
+Terraform
+|
+|
+S3 Bucket
+(terraform.tfstate)
+|
+|
+DynamoDB
+(state locking)
 
 
 
-# Future Improvements
+# Deployment Workflow
 
-* Application Load Balancer (ALB)
-* Launch Templates
-* Auto Scaling Group
-* CloudWatch Monitoring
-* SNS Notifications
-* Multi-AZ High Availability
-* Route 53 Integration
-* HTTPS using AWS Certificate Manager (ACM)
+Infrastructure was deployed using:
+
+
+```bash
+terraform init
+
+terraform fmt
+
+terraform validate
+
+terraform plan
+
+terraform apply
+Validation and Testing
+
+Infrastructure was validated using AWS CLI commands.
+
+Target Group Health Check
+
+Command:
+
+aws elbv2 describe-target-health \
+--target-group-arn <target-group-arn>
+
+Validation result:
+
+TargetHealth:
+
+healthy
+healthy
+
+This confirmed:
+
+EC2 instances were running
+Apache service was available
+Load balancer health checks passed
+Troubleshooting Experience
+
+During deployment, several real infrastructure issues were identified and resolved:
+
+Terraform State Lock Issue
+
+Problem:
+
+Error acquiring the state lock
+
+Solution:
+
+Used Terraform state management tools:
+
+terraform force-unlock <lock-id>
+Subnet CIDR Conflict
+
+Problem:
+
+InvalidSubnet.Conflict
+CIDR conflicts with another subnet
+
+
+Solution:
+
+Verified AWS resources:
+
+aws ec2 describe-subnets
+
+Removed conflicting resources and recreated the correct infrastructure.
+
+Module Output Errors
+
+Problem:
+
+Reference to undeclared resource
+
+Solution:
+
+Reviewed Terraform module relationships and corrected:
+
+Resource names
+Outputs
+Module dependencies
+Screenshots
+
+Project deployment evidence is available in:
+
+screenshots/
+
+Included documentation:
+
+Terraform initialization
+Terraform validation
+Terraform planning
+Infrastructure deployment
+VPC architecture
+Load Balancer creation
+Target health verification
+AWS resource validation
+Skills Demonstrated
+
+This project demonstrates experience with:
+
+Infrastructure as Code (Terraform)
+Terraform Modules
+AWS Networking
+AWS Compute Services
+High Availability Architecture
+Load Balancing
+Auto Scaling
+Remote Terraform State
+AWS CLI
+Linux Administration
+Cloud Troubleshooting
+Production Infrastructure Design
+
+
+
+
+
+
+
+
+
+
 
 
 
